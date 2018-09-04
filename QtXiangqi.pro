@@ -16,12 +16,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     serverdialog.cpp \
-    clientdialog.cpp
+    clientdialog.cpp \
+    chess.cpp
 
 HEADERS  += mainwindow.h \
     serverdialog.h \
-    clientdialog.h
+    clientdialog.h \
+    chess.h
 
 FORMS    += mainwindow.ui \
     serverdialog.ui \
     clientdialog.ui
+
+RESOURCES += \
+    res.qrc
