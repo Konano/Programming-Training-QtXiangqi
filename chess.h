@@ -5,6 +5,7 @@
 #include <QString>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QJsonObject>
 
 #include <QDebug>
 
@@ -16,6 +17,10 @@ class Chess : public QObject
 public:
     explicit Chess(QGraphicsScene *scene, bool color, int type, bool isPlayer, bool alive, QObject *parent);
     ~Chess();
+    QJsonObject outputJSON();
+    void setXY(int x, int y);
+    void setAlive(bool alive);
+
 
 signals:
 

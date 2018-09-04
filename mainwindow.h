@@ -7,6 +7,11 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
+#include <QJsonDocument>
+#include <QJsonValue>
+#include <QJsonArray>
+#include <QJsonObject>
+
 #include "chess.h"
 
 #define rep(i, r) for(int i=0; i<r; i++)
@@ -28,6 +33,8 @@ private slots:
     void on_actionCreate_triggered();
     void on_actionConnect_triggered();
     void recvMessage();
+    void sendJSON(QJsonObject json);
+    void readJSON(QByteArray byteArray);
 
 private:
     Ui::MainWindow *ui;
@@ -41,6 +48,9 @@ private:
     // 0 帅 1-5 兵 6-7 炮 8-9 车 10-11 马 12-13 象 14-15 士
 
     void gameInit();
+    void sendGame();
 };
 
 #endif // MAINWINDOW_H
+
+

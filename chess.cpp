@@ -18,14 +18,14 @@ Chess::Chess(QGraphicsScene *scene, bool color, int type, bool isPlayer, bool al
 	posx = cx[x];
 	posy = cy[y];
 
-	qDebug() << posx << posy << x << y << isPlayer;
+	//qDebug() << posx << posy << x << y << isPlayer;
 
     QString filePath(tr(":/images/") + tr(color ? "r-" : "b-") + QString::number(fileID[type]) + tr(".png"));
-
     QImage image;
     image.load(filePath);
     pic = new QGraphicsPixmapItem(QPixmap::fromImage(image));
 	pic->setPos(posx-imageSize/2, posy-imageSize/2);
+    pic->setVisible(alive);
     scene->addItem(pic);
 }
 
@@ -34,3 +34,27 @@ Chess::~Chess()
     delete pic;
 }
 
+void Chess::setXY(int x, int y)
+{
+    this->x = x;
+    this->y = y;
+    posx = cx[x];
+    posy = cy[y];
+    pic->setPos(posx-imageSize/2, posy-imageSize/2);
+}
+
+void Chess::setAlive(bool alive)
+{
+    this->alive = alive;
+    pic->setVisible(alive);
+}
+
+QJsonObject Chess::outputJSON()
+{
+    QJsonObject pageObject;
+    pageObject.insert("Alive", alive);
+    pageObject.insert("X", x);
+    pageObject.insert("Y", y);
+
+    return pageObject;
+}
