@@ -20,5 +20,6 @@
         <file>videos/fail.mp3</file>
         <file>videos/kill.mp3</file>
         <file>videos/win.mp3</file>
+        <file>images/win.png</file>
     </qresource>
 </RCC>

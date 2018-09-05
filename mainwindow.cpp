@@ -5,6 +5,7 @@
 #include "clientdialog.h"
 
 #include <QPushButton>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QStringList>
@@ -39,7 +40,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionCreate_triggered()
 {
     // killChess(4, 9);
-    // GAMEOVER(false, 1);
+    // GAMEOVER(true, 1);
     isServer = true;
     ServerDialog config(listenSocket, this);
     connect(&config, SIGNAL(connected(QTcpSocket*)), this, SLOT(acceptConnection(QTcpSocket*)));
@@ -139,7 +140,18 @@ void MainWindow::GAMEOVER(bool win, int type)
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(label);
     layout->addWidget(btn);
-    dialog->setLayout(layout);
+    if (win) {
+        QString filename(":/images/win.png");
+        QImage img;
+        if (!img.load(filename)) qDebug("Fail");
+        QLabel *label2 = new QLabel(dialog);
+        label2->setPixmap(QPixmap::fromImage(img));
+        label2->resize(img.width(), img.height());
+        QHBoxLayout *layout2 = new QHBoxLayout();
+        layout2->addWidget(label2);
+        layout2->addLayout(layout);
+        dialog->setLayout(layout2);
+    } else dialog->setLayout(layout);
     connect(btn, SIGNAL(clicked()), dialog, SLOT(reject()));
     connect(dialog, SIGNAL(rejected()), this, SLOT(close()));
     dialog->exec();
