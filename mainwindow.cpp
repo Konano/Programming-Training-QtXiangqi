@@ -7,6 +7,10 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QStringList>
+#include <QFile>
+#include <QTextStream>
+#include <QFileDialog>
 
 #include <QDebug>
 
@@ -663,4 +667,104 @@ void MainWindow::on_pushButton_clicked()
     reply = QMessageBox::question(this, "", tr("确定认输？"), QMessageBox::Yes | QMessageBox::No);
     if(reply == QMessageBox::Yes)
         GAMEOVER(false, 3);
+}
+
+void MainWindow::on_actionImport_triggered()
+{
+    if (gameStart) return;
+    QString path = QFileDialog::getOpenFileName(this,tr("Open..."),".");
+    qDebug() << path;
+    QFile file(path);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    qDebug() << "RED";
+
+    qDebug() << file.readLine();
+    rep(i, 16) redChess[i]->setAlive(false);
+    chessImport(file.readLine(), redChess, 0);
+    chessImport(file.readLine(), redChess, 14);
+    chessImport(file.readLine(), redChess, 12);
+    chessImport(file.readLine(), redChess, 10);
+    chessImport(file.readLine(), redChess, 8);
+    chessImport(file.readLine(), redChess, 6);
+    chessImport(file.readLine(), redChess, 1);
+    for(int i=1; i<=5; i++) if (redChess[i]->isAlive())
+        redChess[i]->crossRiver = (redChess[i]->getY() < 5);
+
+    qDebug() << "BLACK";
+
+    qDebug() << file.readLine();
+    rep(i, 16) blackChess[i]->setAlive(false);
+    chessImport(file.readLine(), blackChess, 0);
+    chessImport(file.readLine(), blackChess, 14);
+    chessImport(file.readLine(), blackChess, 12);
+    chessImport(file.readLine(), blackChess, 10);
+    chessImport(file.readLine(), blackChess, 8);
+    chessImport(file.readLine(), blackChess, 6);
+    chessImport(file.readLine(), blackChess, 1);
+    for(int i=1; i<=5; i++) if (blackChess[i]->isAlive())
+        blackChess[i]->crossRiver = (blackChess[i]->getY() > 4);
+
+    file.close();
+}
+
+void MainWindow::chessImport(QString str, Chess **arr, int st)
+{
+    qDebug() << str.mid(0,str.length()-1);
+
+    QStringList strlist = str.split(' ');
+    int total = strlist.size();
+    for(int i=1; i<total; i++)
+    {
+        str = strlist[i];
+        int length = str.length()-1;
+        int m = str.indexOf(',');
+
+        arr[st]->setXY(str.mid(1,m-1).toInt(), 9-str.mid(m+1,length-1-(m+1)).toInt());
+        arr[st]->setAlive(true);
+        st++;
+    }
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    QString path = QFileDialog::getSaveFileName(this,tr("Save..."),".");
+    qDebug() << path;
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    QTextStream cout(&file);
+
+    cout << "red" << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 0, 0) << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 14, 15) << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 12, 13) << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 10, 11) << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 8, 9) << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 6, 7) << endl;
+    cout << chessSave(isServer==isYourTurn?redChess:blackChess, 1, 5) << endl;
+
+    cout << "black" << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 0, 0) << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 14, 15) << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 12, 13) << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 10, 11) << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 8, 9) << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 6, 7) << endl;
+    cout << chessSave(isServer==isYourTurn?blackChess:redChess, 1, 5) << endl;
+
+    file.close();
+}
+
+QString MainWindow::chessSave(Chess **arr, int st, int ed)
+{
+    QString tmp;
+    int total = 0;
+    for(int i=st; i<=ed; i++) if (arr[i]->isAlive()) {
+        total++;
+        tmp += tr(" <") +
+               QString::number(arr[i]->getX()) + tr(",") +
+               QString::number(9-arr[i]->getY()) + tr(">");
+    }
+    return QString::number(total) + tmp;
 }

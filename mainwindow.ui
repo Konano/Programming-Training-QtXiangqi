@@ -97,6 +97,9 @@
     </property>
     <addaction name="actionCreate"/>
     <addaction name="actionConnect"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
+    <addaction name="actionSave"/>
    </widget>
    <addaction name="menu_S"/>
   </widget>
@@ -108,6 +111,19 @@
   <action name="actionConnect">
    <property name="text">
     <string>连接对局</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>残局载入</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>残局保存</string>
+   </property>
+   <property name="toolTip">
+    <string>残局保存</string>
    </property>
   </action>
  </widget>

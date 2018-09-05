@@ -36,6 +36,8 @@ private slots:
 	void acceptConnection(QTcpSocket*);
     void on_actionCreate_triggered();
     void on_actionConnect_triggered();
+    void on_actionImport_triggered();
+    void on_actionSave_triggered();
     void recvMessage();
     void timeSlot();
     void chessPress(int);
@@ -92,6 +94,9 @@ private:
 
     bool canAttack(Chess *now, int aim);
     bool Check();
+
+    void chessImport(QString str, Chess **arr, int st);
+    QString chessSave(Chess **arr, int st, int ed);
 };
 
 #endif // MAINWINDOW_H

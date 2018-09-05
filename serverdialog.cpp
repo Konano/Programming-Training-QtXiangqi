@@ -5,6 +5,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QDebug>
+#include <QNetworkInterface>
+#include <QList>
 
 ServerDialog::ServerDialog(QTcpServer *listenSocket, QWidget *parent) :
     listenSocket(listenSocket), QDialog(parent),
@@ -12,6 +14,15 @@ ServerDialog::ServerDialog(QTcpServer *listenSocket, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->lineEdit_Post->setValidator(new QIntValidator(0, 65535, this));
+
+    QList<QHostAddress> ipList = QNetworkInterface::allAddresses();
+    foreach(QHostAddress ipItem, ipList)
+        if (ipItem.protocol() == QAbstractSocket::IPv4Protocol &&
+            ipItem != QHostAddress::Null &&
+            ipItem != QHostAddress::LocalHost &&
+            ipItem.toString().left(7) != "192.168" &&
+            ipItem.toString().left(7) != "169.254")
+        ui->lineEdit_IP->setText(ipItem.toString());
 
     connect(this->listenSocket, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
 }
