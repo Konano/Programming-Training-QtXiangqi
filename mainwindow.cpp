@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gameInit();
 
-    YourTurn();
+    // YourTurn();
 }
 
 MainWindow::~MainWindow()
