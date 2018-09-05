@@ -12,6 +12,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+#include <vector>
+
 #include "chess.h"
 
 #define rep(i, r) for(int i=0; i<r; i++)
@@ -33,8 +35,9 @@ private slots:
     void on_actionCreate_triggered();
     void on_actionConnect_triggered();
     void recvMessage();
-    void sendJSON(QJsonObject json);
-    void readJSON(QByteArray byteArray);
+    void timeSlot();
+    void chessPress(int);
+    void seletePress(int, int);
 
 private:
     Ui::MainWindow *ui;
@@ -42,13 +45,45 @@ private:
     QTcpSocket *readWriteSocket;
     QImage *bg;
     QGraphicsScene *scene;
+    QTimer *msTimer;
 
     bool isServer = true;
     Chess *redChess[16], *blackChess[16];
     // 0 帅 1-5 兵 6-7 炮 8-9 车 10-11 马 12-13 象 14-15 士
 
     void gameInit();
+    void GAMEOVER(bool win);
+
+    void sendJSON(QJsonObject json);
+    void readJSON(QByteArray byteArray);
+
     void sendGame();
+    void sendStep(int id, int x, int y);
+    void sendOver();
+
+    bool isYourTurn = false;
+    void YourTurn();
+    void NotYourTurn();
+
+    int countdown = 60;
+    void startCountdown(int st_time);
+    void setTime(int countdown);
+
+    bool gameStart = false;
+
+    Chess *pressedChess = NULL;
+    void holdChess();
+    void releaseChess();
+
+    void killChess(int x, int y);
+    void moveChess(Chess *c, int x, int y);
+    int posChess(int x, int y);
+
+    bool checkPos(int x, int y);
+
+    Selete *seleteMap[9][10];
+    void selete(int x, int y, bool sensetive);
+    void seleteClear();
 };
 
 #endif // MAINWINDOW_H

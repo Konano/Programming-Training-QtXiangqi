@@ -17,7 +17,7 @@ public:
     ~ServerDialog();
 
 signals:
-    void connected(QTcpSocket*);
+    connected(QTcpSocket*);
 
 private slots:
     void initServer();

@@ -68,7 +68,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>127.0.0.1</string>
+       <string>10.0.0.15</string>
       </property>
      </widget>
     </item>

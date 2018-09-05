@@ -12,7 +12,7 @@ ClientDialog::ClientDialog(QTcpSocket *readWriteSocket, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->lineEdit_Post->setValidator(new QIntValidator(0, 65535, this));
-    ui->lineEdit_IP->setValidator(new QRegExpValidator(QRegExp("((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))"), this));
+    ui->lineEdit_IP->setValidator(new QRegExpValidator(QRegExp("((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))"), this));
 
     connect(readWriteSocket, SIGNAL(connected()), this, SLOT(finish()));
 }
