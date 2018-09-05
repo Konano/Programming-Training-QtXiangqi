@@ -179,24 +179,32 @@ bool MainWindow::canAttack(Chess *now, int aim)
             } else {
                 for(i--; i>=0; i--) if (posChess(i, y) == aim) {
                     return true;
+                } else if (posChess(i, y) != 0) {
+                    break;
                 } break;
             }
             for(int i=x+1; i<=8; i++) if (posChess(i, y) == 0) {
             } else {
                 for(i++; i<=8; i++) if (posChess(i, y) == aim) {
                     return true;
+                } else if (posChess(i, y) != 0) {
+                    break;
                 } break;
             }
             for(int i=y-1; i>=0; i--) if (posChess(x, i) == 0) {
             } else {
                 for(i--; i>=0; i--) if (posChess(x, i) == aim) {
                     return true;
+                } else if (posChess(i, y) != 0) {
+                    break;
                 } break;
             }
             for(int i=y+1; i<=9; i++) if (posChess(x, i) == 0) {
             } else {
                 for(i++; i<=9; i++) if (posChess(x, i) == aim) {
                     return true;
+                } else if (posChess(i, y) != 0) {
+                    break;
                 } break;
             }
             break;
