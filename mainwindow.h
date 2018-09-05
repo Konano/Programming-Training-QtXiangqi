@@ -7,6 +7,8 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
+#include <QMediaPlayer>
+
 #include <QJsonDocument>
 #include <QJsonValue>
 #include <QJsonArray>
@@ -39,6 +41,8 @@ private slots:
     void chessPress(int);
     void seletePress(int, int);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTcpServer *listenSocket;
@@ -46,20 +50,21 @@ private:
     QImage *bg;
     QGraphicsScene *scene;
     QTimer *msTimer;
+    QMediaPlayer *qtaudioPlayer;
 
     bool isServer = true;
     Chess *redChess[16], *blackChess[16];
     // 0 帅 1-5 兵 6-7 炮 8-9 车 10-11 马 12-13 象 14-15 士
 
     void gameInit();
-    void GAMEOVER(bool win);
+    void GAMEOVER(bool win, int ype);
 
     void sendJSON(QJsonObject json);
     void readJSON(QByteArray byteArray);
 
     void sendGame();
     void sendStep(int id, int x, int y);
-    void sendOver();
+    void sendOver(int type);
 
     bool isYourTurn = false;
     void YourTurn();
@@ -84,6 +89,9 @@ private:
     Selete *seleteMap[9][10];
     void selete(int x, int y, bool sensetive);
     void seleteClear();
+
+    bool canAttack(Chess *now, int aim);
+    bool Check();
 };
 
 #endif // MAINWINDOW_H

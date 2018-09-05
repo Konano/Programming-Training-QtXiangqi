@@ -5,7 +5,8 @@
 #include "clientdialog.h"
 
 #include <QPushButton>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -34,7 +35,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionCreate_triggered()
 {
     // killChess(4, 9);
-    // YourTurn();
+    // GAMEOVER(false, 1);
     isServer = true;
     ServerDialog config(listenSocket, this);
     connect(&config, SIGNAL(connected(QTcpSocket*)), this, SLOT(acceptConnection(QTcpSocket*)));
@@ -102,24 +103,36 @@ void MainWindow::readJSON(QByteArray byteArray)
                 YourTurn();
             }
             if (QString::compare(strName, QString("Over")) == 0) {
-                GAMEOVER(true);
+                GAMEOVER(true, object.value("Value").toInt());
             }
         }
     }
 }
 
-void MainWindow::GAMEOVER(bool win)
+void MainWindow::GAMEOVER(bool win, int type)
 {
     qDebug() << "GAMEOVER" << win;
 
-    if (win == false) sendOver();
+    qtaudioPlayer = new QMediaPlayer;
+    qtaudioPlayer->setMedia(QUrl(win ? "qrc:/videos/win.mp3" : "qrc:/videos/fail.mp3"));
+    qtaudioPlayer->play();
+
+    if (win == false) sendOver(type);
+
+    QString text;
+    switch (type) {
+        case 1: text += tr("游戏结束\n"); break;
+        case 2: text += (win!=isServer?tr("红方"):tr("黑方")) + tr("超时\n"); break;
+        case 3: text += (win!=isServer?tr("红方"):tr("黑方")) + tr("认输\n"); break;
+    }
+    text += tr("获胜方：") + (win==isServer?tr("红方"):tr("黑方"));
 
     QDialog *dialog = new QDialog(this);
     QLabel *label = new QLabel(dialog);
-    label->setText(win ? "You Win!" : "You Lose!");
+    label->setText(text);
     QPushButton *btn = new QPushButton(dialog);
     btn->setText("OK");
-    QHBoxLayout *layout = new QHBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(label);
     layout->addWidget(btn);
     dialog->setLayout(layout);
@@ -128,14 +141,170 @@ void MainWindow::GAMEOVER(bool win)
     dialog->exec();
 }
 
+bool MainWindow::canAttack(Chess *now, int aim)
+{
+    if (now->isAlive() == false) return false;
+
+    int x = now->getX();
+    int y = now->getY();
+
+    switch (now->getType())
+    {
+        case 1: {
+            if (y != 0 && y != 9 && posChess(x, y+aim) == aim) return true;
+            if (now->crossRiver) {
+                if (x != 0 && posChess(x+1, y) == aim) return true;
+                if (x != 8 && posChess(x-1, y) == aim) return true;
+            }
+            break;
+        }
+        case 6: {
+            for(int i=x-1; i>=0; i--) if (posChess(i, y) == 0) {
+            } else {
+                for(i--; i>=0; i--) if (posChess(i, y) == aim) {
+                    return true;
+                } break;
+            }
+            for(int i=x+1; i<=8; i++) if (posChess(i, y) == 0) {
+            } else {
+                for(i++; i<=8; i++) if (posChess(i, y) == aim) {
+                    return true;
+                } break;
+            }
+            for(int i=y-1; i>=0; i--) if (posChess(x, i) == 0) {
+            } else {
+                for(i--; i>=0; i--) if (posChess(x, i) == aim) {
+                    return true;
+                } break;
+            }
+            for(int i=y+1; i<=9; i++) if (posChess(x, i) == 0) {
+            } else {
+                for(i++; i<=9; i++) if (posChess(x, i) == aim) {
+                    return true;
+                } break;
+            }
+            break;
+        }
+        case 8: {
+            for(int i=x-1; i>=0; i--) if (posChess(i, y) == 0) {
+            } else {
+                if (posChess(i, y) == aim)
+                    return true;
+                break;
+            }
+            for(int i=x+1; i<=8; i++) if (posChess(i, y) == 0) {
+            } else {
+                if (posChess(i, y) == aim)
+                    return true;
+                break;
+            }
+            for(int i=y-1; i>=0; i--) if (posChess(x, i) == 0) {
+            } else {
+                if (posChess(x, i) == aim)
+                    return true;
+                break;
+            }
+            for(int i=y+1; i<=9; i++) if (posChess(x, i) == 0) {
+            } else {
+                if (posChess(x, i) == aim)
+                    return true;
+                break;
+            }
+            break;
+        }
+        case 10: {
+            if (x-1 >= 0 && posChess(x-1, y) == 0) {
+                if (checkPos(x-2, y-1) && posChess(x-2, y-1) == aim)
+                    return true;
+                if (checkPos(x-2, y+1) && posChess(x-2, y+1) == aim)
+                    return true;
+            }
+            if (x+1 <= 8 && posChess(x+1, y) == 0) {
+                if (checkPos(x+2, y-1) && posChess(x+2, y-1) == aim)
+                    return true;
+                if (checkPos(x+2, y+1) && posChess(x+2, y+1) == aim)
+                    return true;
+            }
+            if (y-1 >= 0 && posChess(x, y-1) == 0) {
+                if (checkPos(x-1, y-2) && posChess(x-1, y-2) == aim)
+                    return true;
+                if (checkPos(x+1, y-2) && posChess(x+1, y-2) == aim)
+                    return true;
+            }
+            if (y+1 <= 9 && posChess(x, y+1) == 0) {
+                if (checkPos(x-1, y+2) && posChess(x-1, y+2) == aim)
+                    return true;
+                if (checkPos(x+1, y+2) && posChess(x+1, y+2) == aim)
+                    return true;
+            }
+            break;
+        }
+        case 12: {
+            if (((y >= 5) == (y-2 >= 5)) && checkPos(x-2, y-2) && posChess(x-1, y-1) == 0 && posChess(x-2, y-2) == aim)
+                return true;
+            if (((y >= 5) == (y-2 >= 5)) && checkPos(x+2, y-2) && posChess(x+1, y-1) == 0 && posChess(x+2, y-2) == aim)
+                return true;
+            if (checkPos(x-2, y+2) && posChess(x-1, y+1) == 0 && posChess(x-2, y+2) == aim)
+                return true;
+            if (checkPos(x+2, y+2) && posChess(x+1, y+1) == 0 && posChess(x+2, y+2) == aim)
+                return true;
+            break;
+        }
+        case 14: {
+            if (x-1 >= 3 && y != 7 && y != 0 && posChess(x-1, y-1) == aim)
+                return true;
+            if (x+1 <= 5 && y != 7 && y != 0 && posChess(x+1, y-1) == aim)
+                return true;
+            if (x-1 >= 3 && y != 9 && y != 2 && posChess(x-1, y+1) == aim)
+                return true;
+            if (x+1 <= 5 && y != 9 && y != 2 && posChess(x+1, y+1) == aim)
+                return true;
+            break;
+        }
+        case 0: {
+            if (x-1 >= 3 && posChess(x-1, y) == aim)
+                return true;
+            if (x+1 <= 5 && posChess(x+1, y) == aim)
+                return true;
+            if (y != 7 && y != 0 && posChess(x, y-1) == aim)
+                return true;
+            if (y != 9 && y != 2 && posChess(x, y+1) == aim)
+                return true;
+            for(int i=y-1; i>=0; i--) {
+                if (posChess(x, i) == aim) return true;
+                if (posChess(x, i) != 0) break;
+            }
+            for(int i=y+1; i<=9; i++) {
+                if (posChess(x, i) == aim) return true;
+                if (posChess(x, i) != 0) break;
+            }
+            break;
+        }
+    }
+    return false;
+}
+
+bool MainWindow::Check()
+{
+    rep(i, 16) if (canAttack((isServer?redChess:blackChess)[i], -1)) { qDebug() << "Y" << i; return true;}
+    rep(i, 16) if (canAttack((isServer?blackChess:redChess)[i], 1)) { qDebug() << "N" << i; return true;}
+    return false;
+}
+
 void MainWindow::YourTurn()
 {
     qDebug() << "YourTurn";
     rep(i, 16) (isServer?redChess:blackChess)[i]->myChess();
-    if ((isServer?redChess:blackChess)[0]->isAlive() == false) GAMEOVER(false);
+    if ((isServer?redChess:blackChess)[0]->isAlive() == false) GAMEOVER(false, 1);
     gameStart = true;
     isYourTurn = true;
     startCountdown(timeLimit);
+    if (Check())
+    {
+        qtaudioPlayer = new QMediaPlayer;
+        qtaudioPlayer->setMedia(QUrl("qrc:/videos/check.mp3"));
+        qtaudioPlayer->play();
+    }
 }
 
 void MainWindow::NotYourTurn()
@@ -143,6 +312,12 @@ void MainWindow::NotYourTurn()
     gameStart = true;
     isYourTurn = false;
     startCountdown(timeLimit);
+    if (Check())
+    {
+        qtaudioPlayer = new QMediaPlayer;
+        qtaudioPlayer->setMedia(QUrl("qrc:/videos/check.mp3"));
+        qtaudioPlayer->play();
+    }
 }
 
 void MainWindow::startCountdown(int st_time)
@@ -154,6 +329,10 @@ void MainWindow::startCountdown(int st_time)
 void MainWindow::timeSlot()
 {
     setTime(countdown-1);
+    if (countdown == 0 && isYourTurn)
+        GAMEOVER(false, 2);
+    else
+        msTimer->start(1000);
 }
 
 void MainWindow::killChess(int x, int y)
@@ -164,6 +343,9 @@ void MainWindow::killChess(int x, int y)
     bool isMyChess = (id > 0);
     id = (id>0 ? id : -id) - 1;
     ((isMyChess==isServer)?redChess:blackChess)[id]->setAlive(false);
+    qtaudioPlayer = new QMediaPlayer;
+    qtaudioPlayer->setMedia(QUrl("qrc:/videos/kill.mp3"));
+    qtaudioPlayer->play();
 }
 
 void MainWindow::moveChess(Chess *c, int x, int y)
@@ -171,6 +353,8 @@ void MainWindow::moveChess(Chess *c, int x, int y)
     killChess(x, y);
     selete(c->getX(), c->getY(), false);
     selete(x, y, false);
+    if (c->getType() == 1 && c->getY()+y == 9)
+        c->crossRiver = true, qDebug() << "CrossRiver";
     c->setXY(x, y);
 }
 
@@ -363,6 +547,10 @@ void MainWindow::holdChess()
                 selete(x, y-1, true);
             if (y+1 <= 9 && posChess(x, y+1) <= 0)
                 selete(x, y+1, true);
+            for(int i=y-1; i>=0; i--) {
+                if (posChess(x, i) == -1) selete(x, i, true);
+                if (posChess(x, i) != 0) break;
+            }
             break;
         }
     }
@@ -449,9 +637,6 @@ void MainWindow::sendGame()
 
 void MainWindow::sendStep(int id, int x, int y)
 {
-    if (1 <= id && id <= 5 && y < 5)
-        (isServer?redChess:blackChess)[id]->crossRiver = true;
-
     // 构建 Json 对象
     QJsonObject json;
     json.insert("Type", "Step");
@@ -462,10 +647,20 @@ void MainWindow::sendStep(int id, int x, int y)
     sendJSON(json);
 }
 
-void MainWindow::sendOver()
+void MainWindow::sendOver(int type)
 {
     QJsonObject json;
     json.insert("Type", "Over");
+    json.insert("Value", type);
 
     sendJSON(json);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    if (gameStart == false) return;
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "", tr("确定认输？"), QMessageBox::Yes | QMessageBox::No);
+    if(reply == QMessageBox::Yes)
+        GAMEOVER(false, 3);
 }

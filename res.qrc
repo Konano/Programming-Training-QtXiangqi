@@ -16,5 +16,9 @@
         <file>images/r-12.png</file>
         <file>images/r-14.png</file>
         <file>images/select.png</file>
+        <file>videos/check.mp3</file>
+        <file>videos/fail.mp3</file>
+        <file>videos/kill.mp3</file>
+        <file>videos/win.mp3</file>
     </qresource>
 </RCC>
