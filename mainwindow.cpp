@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gameInit();
 
-    // YourTurn();
+    YourTurn();
 }
 
 MainWindow::~MainWindow()
@@ -370,16 +370,18 @@ void MainWindow::moveChess(Chess *c, int x, int y)
     selete(c->getX(), c->getY(), false);
     selete(x, y, false);
     if (c->getType() == 1 && c->getY()+y == 9)
-        c->crossRiver = true, qDebug() << "CrossRiver";
+        c->crossRiver = true; // qDebug() << "CrossRiver";
     c->setXY(x, y);
 }
 
 int MainWindow::posChess(int x, int y)
 {
+    // qDebug() << x << y << isServer << redChess[2]->getX() << redChess[2]->getX();
     rep(i, 16) if (redChess[i]->isAlive() &&  redChess[i]->getX() == x && redChess[i]->getY() == y)
         return (i+1)*(isServer?1:-1);
     rep(i, 16) if (blackChess[i]->isAlive() &&  blackChess[i]->getX() == x && blackChess[i]->getY() == y)
         return (i+1)*(isServer?-1:1);
+    return 0;
 }
 
 bool MainWindow::checkPos(int x, int y)
@@ -389,6 +391,7 @@ bool MainWindow::checkPos(int x, int y)
 
 void MainWindow::selete(int x, int y, bool sensitive)
 {
+    // qDebug() << x << y;
     seleteMap[x][y]->setVisible(true);
     seleteMap[x][y]->setSensitive(sensitive);
 }
@@ -432,6 +435,8 @@ void MainWindow::holdChess()
     int y = pressedChess->getY();
 
     selete(x, y, false);
+
+    qDebug() << x << y << pressedChess->getType();
 
     switch (pressedChess->getType())
     {
