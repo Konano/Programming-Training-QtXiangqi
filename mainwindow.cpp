@@ -367,6 +367,7 @@ void MainWindow::killChess(int x, int y)
     bool isMyChess = (id > 0);
     id = (id>0 ? id : -id) - 1;
     ((isMyChess==isServer)?redChess:blackChess)[id]->setAlive(false);
+    if (id == 0) return;
     qtaudioPlayer = new QMediaPlayer;
     qtaudioPlayer->setMedia(QUrl("qrc:/videos/kill.mp3"));
     qtaudioPlayer->play();
