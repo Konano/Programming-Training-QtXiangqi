@@ -78,7 +78,7 @@ QJsonObject Chess::outputJSON()
     return pageObject;
 }
 
-Selete::Selete(QGraphicsScene *scene, int x, int y, QObject *parent) :
+Select::Select(QGraphicsScene *scene, int x, int y, QObject *parent) :
     scene(scene), x(x), y(y), QObject(parent)
 {
     posx = cx[x];
@@ -94,19 +94,19 @@ Selete::Selete(QGraphicsScene *scene, int x, int y, QObject *parent) :
     connect(pic, SIGNAL(mousePressed()), this, SLOT(pic_mousePress()));
 }
 
-void Selete::setVisible(bool visible)
+void Select::setVisible(bool visible)
 {
     if (this->visible == false && visible == true) scene->addItem(pic);
     if (this->visible == true && visible == false) scene->removeItem(pic);
     this->visible = visible;
 }
 
-void Selete::setSensitive(bool sensitive)
+void Select::setSensitive(bool sensitive)
 {
     this->sensitive = sensitive;
 }
 
-void Selete::pic_mousePress()
+void Select::pic_mousePress()
 {
     if (visible && sensitive) emit mousePressed(x, y);
 }

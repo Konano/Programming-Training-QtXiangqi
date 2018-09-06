@@ -41,7 +41,7 @@ private slots:
     void recvMessage();
     void timeSlot();
     void chessPress(int);
-    void seletePress(int, int);
+    void selectPress(int, int);
 
     void on_pushButton_clicked();
 
@@ -88,9 +88,9 @@ private:
 
     bool checkPos(int x, int y);
 
-    Selete *seleteMap[9][10];
-    void selete(int x, int y, bool sensetive);
-    void seleteClear();
+    Select *selectMap[9][10];
+    void select(int x, int y, bool sensetive);
+    void selectClear();
 
     bool canAttack(Chess *now, int aim);
     bool Check();

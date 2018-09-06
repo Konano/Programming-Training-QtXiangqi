@@ -65,11 +65,11 @@ private:
 };
 
 
-class Selete : public QObject
+class Select : public QObject
 {
     Q_OBJECT
 public:
-    explicit Selete(QGraphicsScene *scene, int x, int y, QObject *parent = 0);
+    explicit Select(QGraphicsScene *scene, int x, int y, QObject *parent = 0);
     void setVisible(bool);
     void setSensitive(bool);
 

@@ -103,7 +103,7 @@ void MainWindow::readJSON(QByteArray byteArray)
                 int id = object.value("ID").toInt();
                 int X = object.value("X").toInt();
                 int Y = object.value("Y").toInt();
-                seleteClear();
+                selectClear();
                 moveChess((isServer?blackChess:redChess)[id], 8-X, 9-Y);
                 YourTurn();
             }
@@ -376,8 +376,8 @@ void MainWindow::killChess(int x, int y)
 void MainWindow::moveChess(Chess *c, int x, int y)
 {
     killChess(x, y);
-    selete(c->getX(), c->getY(), false);
-    selete(x, y, false);
+    select(c->getX(), c->getY(), false);
+    select(x, y, false);
     if (c->getType() == 1 && c->getY()+y == 9)
         c->crossRiver = true; // qDebug() << "CrossRiver";
     c->setXY(x, y);
@@ -398,19 +398,19 @@ bool MainWindow::checkPos(int x, int y)
     return (x >= 0 && x < 9 && y >= 0 && y < 10);
 }
 
-void MainWindow::selete(int x, int y, bool sensitive)
+void MainWindow::select(int x, int y, bool sensitive)
 {
     // qDebug() << x << y;
-    seleteMap[x][y]->setVisible(true);
-    seleteMap[x][y]->setSensitive(sensitive);
+    selectMap[x][y]->setVisible(true);
+    selectMap[x][y]->setSensitive(sensitive);
 }
 
-void MainWindow::seleteClear()
+void MainWindow::selectClear()
 {
-    rep(i, 9) rep(j, 10) seleteMap[i][j]->setVisible(false);
+    rep(i, 9) rep(j, 10) selectMap[i][j]->setVisible(false);
 }
 
-void MainWindow::seletePress(int x, int y)
+void MainWindow::selectPress(int x, int y)
 {
     Chess *clicked = pressedChess;
     releaseChess();
@@ -438,83 +438,83 @@ void MainWindow::chessPress(int type)
 
 void MainWindow::holdChess()
 {
-    seleteClear();
+    selectClear();
 
     int x = pressedChess->getX();
     int y = pressedChess->getY();
 
-    selete(x, y, false);
+    select(x, y, false);
 
     qDebug() << x << y << pressedChess->getType();
 
     switch (pressedChess->getType())
     {
         case 1: {
-            if (y != 0 && posChess(x, y-1) <= 0) selete(x, y-1, true);
+            if (y != 0 && posChess(x, y-1) <= 0) select(x, y-1, true);
             if (pressedChess->crossRiver) {
-                if (x != 0 && posChess(x-1, y) <= 0) selete(x-1, y, true);
-                if (x != 8 && posChess(x+1, y) <= 0) selete(x+1, y, true);
+                if (x != 0 && posChess(x-1, y) <= 0) select(x-1, y, true);
+                if (x != 8 && posChess(x+1, y) <= 0) select(x+1, y, true);
             }
             break;
         }
         case 6: {
             for(int i=x-1; i>=0; i--) if (posChess(i, y) == 0) {
-                selete(i, y, true);
+                select(i, y, true);
             } else {
                 for(i--; i>=0; i--) if (posChess(i, y) < 0) {
-                    selete(i, y, true); break;
+                    select(i, y, true); break;
                 } break;
             }
             for(int i=x+1; i<=8; i++) if (posChess(i, y) == 0) {
-                selete(i, y, true);
+                select(i, y, true);
             } else {
                 for(i++; i<=8; i++) if (posChess(i, y) < 0) {
-                    selete(i, y, true); break;
+                    select(i, y, true); break;
                 } break;
             }
             for(int i=y-1; i>=0; i--) if (posChess(x, i) == 0) {
-                selete(x, i, true);
+                select(x, i, true);
             } else {
                 for(i--; i>=0; i--) if (posChess(x, i) < 0) {
-                    selete(x, i, true); break;
+                    select(x, i, true); break;
                 } break;
             }
             for(int i=y+1; i<=9; i++) if (posChess(x, i) == 0) {
-                selete(x, i, true);
+                select(x, i, true);
             } else {
                 for(i++; i<=9; i++) if (posChess(x, i) < 0) {
-                    selete(x, i, true); break;
+                    select(x, i, true); break;
                 } break;
             }
             break;
         }
         case 8: {
             for(int i=x-1; i>=0; i--) if (posChess(i, y) == 0) {
-                selete(i, y, true);
+                select(i, y, true);
             } else {
                 if (posChess(i, y) < 0)
-                    selete(i, y, true);
+                    select(i, y, true);
                 break;
             }
             for(int i=x+1; i<=8; i++) if (posChess(i, y) == 0) {
-                selete(i, y, true);
+                select(i, y, true);
             } else {
                 if (posChess(i, y) < 0)
-                    selete(i, y, true);
+                    select(i, y, true);
                 break;
             }
             for(int i=y-1; i>=0; i--) if (posChess(x, i) == 0) {
-                selete(x, i, true);
+                select(x, i, true);
             } else {
                 if (posChess(x, i) < 0)
-                    selete(x, i, true);
+                    select(x, i, true);
                 break;
             }
             for(int i=y+1; i<=9; i++) if (posChess(x, i) == 0) {
-                selete(x, i, true);
+                select(x, i, true);
             } else {
                 if (posChess(x, i) < 0)
-                    selete(x, i, true);
+                    select(x, i, true);
                 break;
             }
             break;
@@ -522,63 +522,63 @@ void MainWindow::holdChess()
         case 10: {
             if (x-1 >= 0 && posChess(x-1, y) == 0) {
                 if (checkPos(x-2, y-1) && posChess(x-2, y-1) <= 0)
-                    selete(x-2, y-1, true);
+                    select(x-2, y-1, true);
                 if (checkPos(x-2, y+1) && posChess(x-2, y+1) <= 0)
-                    selete(x-2, y+1, true);
+                    select(x-2, y+1, true);
             }
             if (x+1 <= 8 && posChess(x+1, y) == 0) {
                 if (checkPos(x+2, y-1) && posChess(x+2, y-1) <= 0)
-                    selete(x+2, y-1, true);
+                    select(x+2, y-1, true);
                 if (checkPos(x+2, y+1) && posChess(x+2, y+1) <= 0)
-                    selete(x+2, y+1, true);
+                    select(x+2, y+1, true);
             }
             if (y-1 >= 0 && posChess(x, y-1) == 0) {
                 if (checkPos(x-1, y-2) && posChess(x-1, y-2) <= 0)
-                    selete(x-1, y-2, true);
+                    select(x-1, y-2, true);
                 if (checkPos(x+1, y-2) && posChess(x+1, y-2) <= 0)
-                    selete(x+1, y-2, true);
+                    select(x+1, y-2, true);
             }
             if (y+1 <= 9 && posChess(x, y+1) == 0) {
                 if (checkPos(x-1, y+2) && posChess(x-1, y+2) <= 0)
-                    selete(x-1, y+2, true);
+                    select(x-1, y+2, true);
                 if (checkPos(x+1, y+2) && posChess(x+1, y+2) <= 0)
-                    selete(x+1, y+2, true);
+                    select(x+1, y+2, true);
             }
             break;
         }
         case 12: {
             if (y-2 >= 5 && checkPos(x-2, y-2) && posChess(x-1, y-1) == 0 && posChess(x-2, y-2) <= 0)
-                selete(x-2, y-2, true);
+                select(x-2, y-2, true);
             if (y-2 >= 5 && checkPos(x+2, y-2) && posChess(x+1, y-1) == 0 && posChess(x+2, y-2) <= 0)
-                selete(x+2, y-2, true);
+                select(x+2, y-2, true);
             if (checkPos(x-2, y+2) && posChess(x-1, y+1) == 0 && posChess(x-2, y+2) <= 0)
-                selete(x-2, y+2, true);
+                select(x-2, y+2, true);
             if (checkPos(x+2, y+2) && posChess(x+1, y+1) == 0 && posChess(x+2, y+2) <= 0)
-                selete(x+2, y+2, true);
+                select(x+2, y+2, true);
             break;
         }
         case 14: {
             if (x-1 >= 3 && y-1 >= 7 && posChess(x-1, y-1) <= 0)
-                selete(x-1, y-1, true);
+                select(x-1, y-1, true);
             if (x+1 <= 5 && y-1 >= 7 && posChess(x+1, y-1) <= 0)
-                selete(x+1, y-1, true);
+                select(x+1, y-1, true);
             if (x-1 >= 3 && y+1 <= 9 && posChess(x-1, y+1) <= 0)
-                selete(x-1, y+1, true);
+                select(x-1, y+1, true);
             if (x+1 <= 5 && y+1 <= 9 && posChess(x+1, y+1) <= 0)
-                selete(x+1, y+1, true);
+                select(x+1, y+1, true);
             break;
         }
         case 0: {
             if (x-1 >= 3 && posChess(x-1, y) <= 0)
-                selete(x-1, y, true);
+                select(x-1, y, true);
             if (x+1 <= 5 && posChess(x+1, y) <= 0)
-                selete(x+1, y, true);
+                select(x+1, y, true);
             if (y-1 >= 7 && posChess(x, y-1) <= 0)
-                selete(x, y-1, true);
+                select(x, y-1, true);
             if (y+1 <= 9 && posChess(x, y+1) <= 0)
-                selete(x, y+1, true);
+                select(x, y+1, true);
             for(int i=y-1; i>=0; i--) {
-                if (posChess(x, i) == -1) selete(x, i, true);
+                if (posChess(x, i) == -1) select(x, i, true);
                 if (posChess(x, i) != 0) break;
             }
             break;
@@ -588,7 +588,7 @@ void MainWindow::holdChess()
 
 void MainWindow::releaseChess()
 {
-    seleteClear();
+    selectClear();
     pressedChess = NULL;
 }
 
@@ -628,8 +628,8 @@ void MainWindow::gameInit()
     }
 
     rep(i, 9) rep(j, 10) {
-        seleteMap[i][j] = new Selete(scene, i, j, this);
-        connect(seleteMap[i][j], SIGNAL(mousePressed(int,int)), this, SLOT(seletePress(int,int)));
+        selectMap[i][j] = new Select(scene, i, j, this);
+        connect(selectMap[i][j], SIGNAL(mousePressed(int,int)), this, SLOT(selectPress(int,int)));
     }
 
     ui->graphicsView->show();
