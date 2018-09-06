@@ -59,7 +59,7 @@ private:
     // 0 帅 1-5 兵 6-7 炮 8-9 车 10-11 马 12-13 象 14-15 士
 
     void gameInit();
-    void GAMEOVER(bool win, int ype);
+    void GAMEOVER(bool win, int type);
 
     void sendJSON(QJsonObject json);
     void readJSON(QByteArray byteArray);
