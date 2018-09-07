@@ -33,7 +33,7 @@ public:
     ~MainWindow();
 
 private slots:
-	void acceptConnection(QTcpSocket*);
+    void acceptConnection(QTcpSocket*);
     void on_actionCreate_triggered();
     void on_actionConnect_triggered();
     void on_actionImport_triggered();

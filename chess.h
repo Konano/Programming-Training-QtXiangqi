@@ -50,8 +50,8 @@ private slots:
     void pic_mousePress();
 
 private:
-	QGraphicsScene *scene;
-	PIC *pic;
+    QGraphicsScene *scene;
+    PIC *pic;
 
     int x, y;
     // 棋盘位置

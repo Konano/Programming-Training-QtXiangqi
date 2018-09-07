@@ -49,5 +49,5 @@ void ClientDialog::connectHost()
 void ClientDialog::finish()
 {
     emit connected(readWriteSocket);
-	accept();
+    accept();
 }

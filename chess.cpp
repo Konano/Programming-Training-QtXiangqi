@@ -15,17 +15,17 @@ Chess::Chess(QGraphicsScene *scene, bool color, int id, QObject *parent) :
     int tmp = (color ? 1 : -1);
     x = 4 + tmp*dx[id];
     y = (color ? 5 : 4) + tmp*dy[id];
-	posx = cx[x];
-	posy = cy[y];
+    posx = cx[x];
+    posy = cy[y];
 
-	//qDebug() << posx << posy << x << y << isPlayer;
+    //qDebug() << posx << posy << x << y << isPlayer;
 
     QString filePath(tr(":/images/") + tr(color ? "r-" : "b-") + QString::number(type[id]) + tr(".png"));
     QImage image;
     image.load(filePath);
     pic = new PIC();
     pic->setPixmap(QPixmap::fromImage(image));
-	pic->setPos(posx-imageSize/2, posy-imageSize/2);
+    pic->setPos(posx-imageSize/2, posy-imageSize/2);
     pic->setVisible(alive);
     connect(pic, SIGNAL(mousePressed()), this, SLOT(pic_mousePress()));
     scene->addItem(pic);
