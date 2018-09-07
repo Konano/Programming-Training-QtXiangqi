@@ -1,13 +1,13 @@
 #include "chess.h"
 #include <QImage>
 
-const int dx[16] = {0,-4,-2,0,2,4,-3,3,-4,4,-3,3,-2,2,-1,1};
-const int dy[16] = {4,1,1,1,1,1,2,2,4,4,4,4,4,4,4,4};
+const int dx[16] = {0,-4,-2,0,2,4,-3,3,-4,4,-3,3,-2,2,-1,1}; // ID 为 i 的棋子的落点的横坐标（相对于(4,4)）
+const int dy[16] = {4,1,1,1,1,1,2,2,4,4,4,4,4,4,4,4}; // ID 为 i 的棋子的落点的纵坐标（相对于(4,4)）
 
-const int cx[9] = {56,110,166,222,276,331,386,441,494};
-const int cy[10] = {54,108,163,218,273,328,383,439,493,547};
+const int cx[9] = {56,110,166,222,276,331,386,441,494}; // 棋盘落点横向从左到右的像素坐标
+const int cy[10] = {54,108,163,218,273,328,383,439,493,547}; // 棋盘落点纵向从上到下的像素坐标
 
-const int type[16] = {0,1,1,1,1,1,6,6,8,8,10,10,12,12,14,14};
+const int type[16] = {0,1,1,1,1,1,6,6,8,8,10,10,12,12,14,14}; // 棋子的类型
 
 Chess::Chess(QGraphicsScene *scene, bool color, int id, QObject *parent) :
     scene(scene), color(color), id(id), isPlayer(false), alive(true), QObject(parent)
