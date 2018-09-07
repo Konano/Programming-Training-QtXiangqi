@@ -17,11 +17,11 @@ public:
     ~ClientDialog();
 
 signals:
-	connected(QTcpSocket*);
+    connected(QTcpSocket*);
 
 private slots:
-	void connectHost();
-	void finish();
+    void connectHost();
+    void finish();
 
 private:
     Ui::ClientDialog *ui;
