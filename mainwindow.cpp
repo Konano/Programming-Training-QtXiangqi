@@ -40,7 +40,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionCreate_triggered()
 {
     // killChess(4, 9);
-    // GAMEOVER(true, 1);
+    // gameOver(true, 1);
     isServer = true;
     ServerDialog config(listenSocket, this);
     connect(&config, SIGNAL(connected(QTcpSocket*)), this, SLOT(acceptConnection(QTcpSocket*)));
@@ -108,15 +108,15 @@ void MainWindow::readJSON(QByteArray byteArray)
                 YourTurn();
             }
             if (QString::compare(strName, QString("Over")) == 0) {
-                GAMEOVER(true, object.value("Value").toInt());
+                gameOver(true, object.value("Value").toInt());
             }
         }
     }
 }
 
-void MainWindow::GAMEOVER(bool win, int type)
+void MainWindow::gameOver(bool win, int type)
 {
-    qDebug() << "GAMEOVER" << win;
+    qDebug() << "gameOver" << win;
 
     qtaudioPlayer = new QMediaPlayer;
     qtaudioPlayer->setMedia(QUrl(win ? "qrc:/videos/win.mp3" : "qrc:/videos/fail.mp3"));
@@ -319,7 +319,7 @@ void MainWindow::YourTurn()
 {
     qDebug() << "YourTurn";
     rep(i, 16) (isServer?redChess:blackChess)[i]->myChess();
-    if ((isServer?redChess:blackChess)[0]->isAlive() == false) GAMEOVER(false, 1);
+    if ((isServer?redChess:blackChess)[0]->isAlive() == false) gameOver(false, 1);
     gameStart = true;
     isYourTurn = true;
     startCountdown(timeLimit);
@@ -354,7 +354,7 @@ void MainWindow::timeSlot()
 {
     setTime(countdown-1);
     if (countdown == 0 && isYourTurn)
-        GAMEOVER(false, 2);
+        gameOver(false, 2);
     else
         msTimer->start(1000);
 }
@@ -692,7 +692,7 @@ void MainWindow::on_pushButton_clicked()
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "", tr("确定认输？"), QMessageBox::Yes | QMessageBox::No);
     if(reply == QMessageBox::Yes)
-        GAMEOVER(false, 3);
+        gameOver(false, 3);
 }
 
 void MainWindow::on_actionImport_triggered()
