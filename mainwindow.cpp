@@ -15,7 +15,7 @@
 
 #include <QDebug>
 
-#define timeLimit 60
+#define TIME_LIMIT 60
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -322,7 +322,7 @@ void MainWindow::YourTurn()
     if ((isServer?redChess:blackChess)[0]->isAlive() == false) gameOver(false, 1);
     gameStart = true;
     isYourTurn = true;
-    startCountdown(timeLimit);
+    startCountdown(TIME_LIMIT);
     if (Check())
     {
         qtaudioPlayer = new QMediaPlayer;
@@ -335,7 +335,7 @@ void MainWindow::NotYourTurn()
 {
     gameStart = true;
     isYourTurn = false;
-    startCountdown(timeLimit);
+    startCountdown(TIME_LIMIT);
     if (Check())
     {
         qtaudioPlayer = new QMediaPlayer;

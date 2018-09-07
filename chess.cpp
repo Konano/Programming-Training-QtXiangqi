@@ -25,7 +25,7 @@ Chess::Chess(QGraphicsScene *scene, bool color, int id, QObject *parent) :
     image.load(filePath);
     pic = new PIC();
     pic->setPixmap(QPixmap::fromImage(image));
-    pic->setPos(posx-imageSize/2, posy-imageSize/2);
+    pic->setPos(posx-IMAGE_SIZE/2, posy-IMAGE_SIZE/2);
     pic->setVisible(alive);
     connect(pic, SIGNAL(mousePressed()), this, SLOT(pic_mousePress()));
     scene->addItem(pic);
@@ -49,7 +49,7 @@ void Chess::setXY(int x, int y)
     this->y = y;
     posx = cx[x];
     posy = cy[y];
-    pic->setPos(posx-imageSize/2, posy-imageSize/2);
+    pic->setPos(posx-IMAGE_SIZE/2, posy-IMAGE_SIZE/2);
 }
 
 void Chess::setAlive(bool alive)
@@ -89,7 +89,7 @@ Select::Select(QGraphicsScene *scene, int x, int y, QObject *parent) :
     image.load(filePath);
     pic = new PIC();
     pic->setPixmap(QPixmap::fromImage(image));
-    pic->setPos(posx-imageSize/2, posy-imageSize/2);
+    pic->setPos(posx-IMAGE_SIZE/2, posy-IMAGE_SIZE/2);
     pic->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
     connect(pic, SIGNAL(mousePressed()), this, SLOT(pic_mousePress()));
 }

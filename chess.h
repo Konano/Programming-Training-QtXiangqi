@@ -9,7 +9,7 @@
 
 #include <QDebug>
 
-#define imageSize 50
+#define IMAGE_SIZE 50
 
 class PIC : public QObject, public QGraphicsPixmapItem
 {
